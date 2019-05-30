@@ -1,0 +1,81 @@
+<app-auth-content>
+    <div class="app-title">
+        <div>
+            <h1>
+                <i class="fa fa-users"></i> รายการสมาชิก</h1>
+            <p>หน้าแสดงรายการสมาชิก ค้นหา ลบ และแก้ไข</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="fa fa-home fa-lg"></i>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#">รายการสมาชิก</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+              <!-- ส่วนหัว -->
+        <div class="tile-title-w-btn">
+            <h3 class="title">
+                <i class="fa fa-list"></i> รายการข้อมูลสมาชิก
+            </h3>
+
+            <!-- ค้นหา -->
+              <div class="form-group">
+                  <div class="input-group">
+                      <div class="input-group-prepend" dropdown>
+                          <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+                          aria-controls="dropdown-basic">
+                    ค้นหาจาก <span class="caret"></span>
+                  </button>
+                  <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+                      role="menu" aria-labelledby="button-basic">
+                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
+                  </ul>
+                      </div>
+
+                      <input type="text" class="form-control" placeholder="ค้นหาข้อมูล">
+
+                      <div class="input-group-append">
+                          <button class="btn btn-primary" type="button">
+                              <i class="fa fa-search"></i>
+                          </button>
+                        </div>
+                    </div>
+              </div>
+          </div>
+                <div class="tile-body">
+                    <div class="table-reponsive">
+                        <table class="table">
+                            <thead>
+                              <tr>
+                                <th>ชื่อ</th>
+                                <th>นามสกุล</th>
+                                <th>ตำแหน่ง</th>
+                                <th>อีเมล์</th>
+                                <th>สิทธิ์การใช้งาน</th>
+                                <th>วันที่</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="7">
+                                        จำนวนสมาชิกทั้งหมด 0 คน
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <pagination previousText="ก่อนหน้า" nextText="ถัดไป" [totalItems]="30"></pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-auth-content>
