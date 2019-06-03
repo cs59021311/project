@@ -50,7 +50,7 @@ export class AlertService {
             });
     }
 
-    someting_wrong(message: string = 'ข้อมูลบางอย่างไม่ถูกต้อง กรุณาลองอีกครั้ง') {
+    someting_wrong(message: string = 'ข้อมูลบางอย่างไม่ถูกต้อง กรุณาลองอีกครั้ง!') {
         this.notify(message);
     }
 

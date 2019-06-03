@@ -7,3 +7,8 @@ export interface IChangePasswordComponent {
 
   onSubmit();
 }
+
+export interface IChangePassword {
+  old_pass: string;
+  new_pass: string;
+}

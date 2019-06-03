@@ -2,11 +2,12 @@ import { Injectable } from "@angular/core";
 import { IRegister } from 'src/app/components/register/register.interface';
 import { ILogin } from 'src/app/components/login/login.interface';
 import { IProfile } from 'src/app/authentication/components/profile/profile.interface';
+import { IChangePassword } from 'src/app/authentication/components/profile/change-password/change-pasword.interface';
 
 @Injectable()
 export class AccountService {
 
-  private mockUserItems: IAccount[] = [
+  public mockUserItems: IAccount[] = [
     {
         id: 1,
         firstname: 'ปริญญา',
@@ -15,21 +16,35 @@ export class AccountService {
         password: '123456',
         position: 'ผู้ดูแลระบบบัญชีผู้ใช้',
         image: 'https://s3.amazonaws.com/uifaces/faces/twitter/jsa/48.jpg',
+        role: IRoleAccount.Admin,
         created: new Date(),
         updated: new Date()
     },
     {
-      id: 2,
-      firstname: 'นพนัย',
-      lastname: 'จันทร์สี',
-      email: 'asdasd@gmail.com',
-      password: '123456',
-      position: 'ผู้ดูแลระบบจัดการรายได้',
-      image: null,
-      created: new Date(),
-      updated: new Date()
+        id: 2,
+        firstname: 'นพนัย',
+        lastname: 'จันทร์สี',
+        email: 'asdasd@gmail.com',
+        password: '123456',
+        position: 'ผู้ดูแลระบบจัดการรายได้',
+        image: null,
+        role: IRoleAccount.Employee,
+        created: new Date(),
+        updated: new Date()
   }
   ];
+
+  // เปลี่ยนรหัสผ่านใหม่
+  onChangePassword(accessToken: string, model: IChangePassword) {
+      return new Promise((resolve, reject) => {
+          const userProfile = this.mockUserItems.find(item => item.id == accessToken);
+          if (!userProfile) return reject({ Message: 'ไม่มีข้อมูลผู้ใช้งาน'});
+          if (userProfile.password != model.old_pass) return reject({ Message: 'รหัสผ่านเดิมไม่ถูกต้อง' });
+          userProfile.password = model.new_pass;
+          userProfile.updated = new Date();
+          resolve(userProfile);
+      });
+  }
 
   // แก้ไขข้อมูลส่วนตัว Update profile
   onUpdateProfile(accessToken: string, model: IProfile) {
@@ -86,6 +101,13 @@ export interface IAccount {
     id?: any;
     position?: string;
     image?: string;
+    role?: IRoleAccount;
     created?: Date;
     updated?: Date;
+}
+
+export enum IRoleAccount {
+    Member = 1,
+    Employee,
+    Admin
 }

@@ -5,6 +5,7 @@ import { AccountService } from 'src/app/shareds/services/account.service';
 import { AuthenService } from 'src/app/services/authen.service';
 import { AlertService } from 'src/app/shareds/services/alert.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import { SharedsService } from 'src/app/shareds/services/shareds.service';
 
 @Component({
   selector: 'app-profile',
@@ -17,18 +18,19 @@ export class ProfileComponent implements IProfileComponent {
     private account: AccountService,
     private authen: AuthenService,
     private alert: AlertService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private shareds: SharedsService
   ) {
     this.initialCreateFormData();
     this.initialLoadUpdateFormData();
+
+    // เพิ่ม position // ถ้าต้องการแก้ position ไปแก้ที่หน้า shareds.service.ts นะ เดี๋ยวลืม!
+    this.positionItems = this.shareds.positionItems;
   }
 
   form: FormGroup;
   modalRef: BsModalRef;
-  positionItems: any[] = [
-      'ผู้ดูแลระบบบัญชีผู้ใช้',
-      'ผู้ดูแลระบบจัดการรายได้'
-  ];
+  positionItems: any[] = [];
 
   // บันทึกข้อมูล
   onSubmit() {
@@ -43,22 +45,31 @@ export class ProfileComponent implements IProfileComponent {
   // แปลงไฟล์รูปเป็น Base64
   onConvertImage(input: HTMLInputElement) {
       const imageControl = this.form.controls['image'];
-      const imageTypes = ['image/jpeg', 'image/png'];
+      this.shareds
+          .onConvertImage(input)
+          .then(base64 => imageControl.setValue(base64))
+          .catch(err => {
+              imageControl.setValue(null);
+              input.value = null;
+              this.alert.notify(err.Message);
+          });
+          // ย้ายไปไว้ใน shareds.service.ts
+      // const imageTypes = ['image/jpeg', 'image/png'];
 
-      imageControl.setValue(null);
-      if (input.files.length == 0) return;
+      // imageControl.setValue(null);
+      // if (input.files.length == 0) return;
 
-      // ตรวจสอบชนิดไฟล์ที่อัพโหลดเข้ามา
-      if (imageTypes.indexOf(input.files[0].type) < 0) {
-        input.value = null;
-        return this.alert.notify('กรุณาอัพโหลดรูปภาพเท่านั้น');
-      }
+      // // ตรวจสอบชนิดไฟล์ที่อัพโหลดเข้ามา
+      // if (imageTypes.indexOf(input.files[0].type) < 0) {
+      //   input.value = null;
+      //   return this.alert.notify('กรุณาอัพโหลดรูปภาพเท่านั้น');
+      // }
 
-      const reader = new FileReader();
-      reader.readAsDataURL(input.files[0]);
-      reader.addEventListener('load', () => {
-          imageControl.setValue(reader.result);
-      });
+      // const reader = new FileReader();
+      // reader.readAsDataURL(input.files[0]);
+      // reader.addEventListener('load', () => {
+      //     imageControl.setValue(reader.result);
+      // });
   }
 
   // เปิด Modal dialog

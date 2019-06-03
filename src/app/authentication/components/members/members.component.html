@@ -29,20 +29,22 @@
                       <div class="input-group-prepend" dropdown>
                           <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
                           aria-controls="dropdown-basic">
-                    ค้นหาจาก <span class="caret"></span>
+                    {{ searchType.value }} <span class="caret"></span>
                   </button>
                   <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
                       role="menu" aria-labelledby="button-basic">
-                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
+                    <li *ngFor="let item of searchTypeItems" role="menuitem">
+                        <a class="dropdown-item" (click)="searchType = item">
+                          {{ item.value }}
+                        </a>
+                    </li>
                   </ul>
                       </div>
 
-                      <input type="text" class="form-control" placeholder="ค้นหาข้อมูล">
+                      <input type="text" [(ngModel)]="searchText" class="form-control" placeholder="ค้นหาข้อมูล">
 
                       <div class="input-group-append">
-                          <button class="btn btn-primary" type="button">
+                          <button (click)="onSearchItem()" class="btn btn-primary" type="button">
                               <i class="fa fa-search"></i>
                           </button>
                         </div>
@@ -52,27 +54,48 @@
                 <div class="tile-body">
                     <div class="table-reponsive">
                         <table class="table">
+
+                            <!-- Head -->
                             <thead>
                               <tr>
+                                <th>อีเมล์</th>
                                 <th>ชื่อ</th>
                                 <th>นามสกุล</th>
                                 <th>ตำแหน่ง</th>
-                                <th>อีเมล์</th>
-                                <th>สิทธิ์การใช้งาน</th>
+                                <th>สิทธิ์ผู้ใช้</th>
                                 <th>วันที่</th>
                                 <th></th>
                               </tr>
                             </thead>
+
+                            <!-- Body -->
+                            <tbody>
+                                <tr *ngFor="let item of items.items">
+                                    <td>{{ item.email }}</td>
+                                    <td>{{ item.firstname }}</td>
+                                    <td>{{ item.lastname }}</td>
+                                    <td>{{ item.position }}</td>
+                                    <td>{{ getRoleName(item.role) }}</td>
+                                    <td>{{ item.updated | date: 'dd-MM-yyyy' }}</td>
+                                    <td class="text-right">
+                                        <i class="fa fa-edit"></i>
+                                        <span> | </span>
+                                        <i class="fa fa-trash"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <!-- Foot -->
                             <tfoot>
                                 <tr>
                                     <th colspan="7">
-                                        จำนวนสมาชิกทั้งหมด 0 คน
+                                        จำนวนสมาชิกทั้งหมด {{ items.totalItems }} คน
                                     </th>
                                 </tr>
                             </tfoot>
                         </table>
 
-                        <pagination previousText="ก่อนหน้า" nextText="ถัดไป" [totalItems]="30"></pagination>
+                        <pagination [(ngModel)]="startPage" [itemsPerPage]="limitPage" (pageChanged)="onPageChanged($event)" [rotate]="false" [maxSize]="10" previousText="ก่อนหน้า" nextText="ถัดไป" [totalItems]="items.totalItems"></pagination>
                     </div>
                 </div>
             </div>

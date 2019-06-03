@@ -5,6 +5,7 @@ import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/fo
 import { AlertService } from '../../shareds/services/alert.service';
 import { AccountService } from 'src/app/shareds/services/account.service';
 import { Router } from '@angular/router';
+import { ValidatorsService } from 'src/app/shareds/services/validators.service';
 declare let $;
 @Component({
     selector: 'app-register',
@@ -16,7 +17,8 @@ export class RegisterComponent implements IRegisterComponent {
         private builder: FormBuilder,
         private alert: AlertService,
         private account: AccountService,
-        private router: Router
+        private router: Router,
+        private validators: ValidatorsService
     ) {
         this.initialCreateFormData();
     }
@@ -44,23 +46,23 @@ export class RegisterComponent implements IRegisterComponent {
             firstname: ['', [Validators.required]],
             lastname: ['', [Validators.required]],
             email: ['', [Validators.required, Validators.email]],
-            password: ['', [Validators.required, Validators.pattern(/^[A-z0-9]{5,15}$/)]],
-            cpassword: ['', [Validators.required, this.comparePassword('password')]]
+            password: ['', [Validators.required, this.validators.isPassword]],
+            cpassword: ['', [Validators.required, this.validators.comparePassword('password')]]
         });
     }
 
-    // สร้าง validate เอง รหัสผ่านให้ตรงกัน
-    private comparePassword(passwordField: string) {
-        return function (confirm_password: AbstractControl) {
-            if (!confirm_password.parent) return;
-            const password = confirm_password.parent.get(passwordField);
-            const passwordSubscripe = password.valueChanges.subscribe(() => {
-                confirm_password.updateValueAndValidity();
-                passwordSubscripe.unsubscribe();
-            });
-            if (confirm_password.value === password.value)
-                return;
-            return { compare: true };
-        }
-    }
+     // สร้าง validate เอง รหัสผ่านให้ตรงกัน ย้ายไป validators.service.ts
+    // private comparePassword(passwordField: string) {
+    //     return function (confirm_password: AbstractControl) {
+    //         if (!confirm_password.parent) return;
+    //         const password = confirm_password.parent.get(passwordField);
+    //         const passwordSubscripe = password.valueChanges.subscribe(() => {
+    //             confirm_password.updateValueAndValidity();
+    //             passwordSubscripe.unsubscribe();
+    //         });
+    //         if (confirm_password.value === password.value)
+    //             return;
+    //         return { compare: true };
+    //     }
+    // }
 }

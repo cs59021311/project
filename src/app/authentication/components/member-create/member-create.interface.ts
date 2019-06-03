@@ -1,0 +1,12 @@
+import { IRoleAccount } from 'src/app/shareds/services/account.service';
+import { FormGroup } from '@angular/forms';
+
+export interface IMemberCreateComponent {
+  form: FormGroup;
+  positionItems: string[];
+  roleItems: IRoleAccount[];
+
+  onSubmit(): void;
+  getRoleName(role: IRoleAccount): string;
+  onConvertImage(input: HTMLInputElement);
+}
