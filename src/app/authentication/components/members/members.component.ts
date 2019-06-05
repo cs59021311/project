@@ -4,6 +4,9 @@ import { IMembersComponent, IMemberSearchKey, IMemberSearch, IMember } from './m
 import { IAccount, IRoleAccount } from 'src/app/shareds/services/account.service';
 import { AlertService } from 'src/app/shareds/services/alert.service';
 import { PageChangedEvent } from 'ngx-bootstrap';
+import { Router } from '@angular/router';
+import { AppURL } from 'src/app/app.url';
+import { AuthURL } from '../../authentication.url';
 
 @Component({
     selector: 'app-members',
@@ -15,7 +18,9 @@ export class MembersComponent implements IMembersComponent {
     constructor(
         private member: MemberService,
         private alert: AlertService,
-        private detect: ChangeDetectorRef // กระตุ้น Event
+        private detect: ChangeDetectorRef, // กระตุ้น Event
+        private router: Router
+
     ) {
         this.initialLoadMembers({
             startPage: this.startPage,
@@ -57,7 +62,7 @@ export class MembersComponent implements IMembersComponent {
     onSearchItem() {
         this.startPage = 1;
         this.initialLoadMembers({
-            searchText: this.searchType.key == 'role' ? IRoleAccount[this.searchText] || '' : this.searchText,
+            searchText: this.getSearchText,
             searchType: this.searchType.key,
             startPage: this.startPage,
             limitPage: this.limitPage
@@ -69,6 +74,41 @@ export class MembersComponent implements IMembersComponent {
     // แสดงชื่อสิทธิ์ผู้ใช้งาน
     getRoleName(role: IRoleAccount) {
       return IRoleAccount[role];
+    }
+
+    // ลบข้อมูลสมาชิก
+    onDeleteMember(item: IAccount) {
+        this.alert.confirm().then(status => {
+            if (!status) return;
+            this.member
+                .deleteMember(item.id)
+                .then(() => {
+                    // โหลดข้อมูล Member ใหม่
+                    this.initialLoadMembers({
+                        searchText: this.getSearchText,
+                        searchType: this.searchType.key,
+                        startPage: this.startPage,
+                        limitPage: this.limitPage
+                    });
+                    this.alert.notify('ลบข้อมูลสำเร็จ', 'info');
+                })
+                .catch(err => this.alert.notify(err.Message));
+
+        });
+    }
+
+    // แก้ไขข้อมูลสมาชิกโดยส่ง id ไปยัง url
+    onUpdateMember(item: IAccount) {
+        this.router.navigate(['',
+            AppURL.Authen,
+            AuthURL.MemberCreate,
+            item.id
+        ]);
+    }
+
+    // ตรวจสอบและ return ค่า searchText
+    private get getSearchText() {
+        return this.searchType.key == 'role' ? IRoleAccount[this.searchText] || '' : this.searchText;
     }
 
     // โหลดข้อมูลสมาชิก

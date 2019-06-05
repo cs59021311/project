@@ -49,8 +49,8 @@ export class ProfileComponent implements IProfileComponent {
           .onConvertImage(input)
           .then(base64 => imageControl.setValue(base64))
           .catch(err => {
-              imageControl.setValue(null);
               input.value = null;
+              imageControl.setValue(null);
               this.alert.notify(err.Message);
           });
           // ย้ายไปไว้ใน shareds.service.ts

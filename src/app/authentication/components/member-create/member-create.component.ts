@@ -5,9 +5,10 @@ import { SharedsService } from 'src/app/shareds/services/shareds.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AlertService } from 'src/app/shareds/services/alert.service';
 import { MemberService } from '../../services/member.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AppURL } from 'src/app/app.url';
 import { AuthURL } from '../../authentication.url';
+import { ValidatorsService } from 'src/app/shareds/services/validators.service';
 
 @Component({
   selector: 'app-member-create',
@@ -20,17 +21,24 @@ export class MemberCreateComponent implements IMemberCreateComponent {
     private shareds: SharedsService,
     private builder: FormBuilder,
     private alert: AlertService,
+    private validators: ValidatorsService,
     private member: MemberService,
-    private router: Router
+    private router: Router,
+    private activatedRouter: ActivatedRoute
 
   ) {
+    this.activatedRouter.params.forEach(params => {
+        this.memId = params.id;
+    });
     this.initialCreateFormData();
+    this.initialUpdateFormData();
 
     // เพิ่ม position // ถ้าต้องการแก้ position ไปแก้ที่หน้า shareds.service.ts นะ เดี๋ยวลืม!
     this.positionItems = this.shareds.positionItems;
    }
 
   form: FormGroup;
+  memId: any;
   positionItems: string[];
   roleItems: IRoleAccount[] = [
       IRoleAccount.Member,
@@ -42,13 +50,27 @@ export class MemberCreateComponent implements IMemberCreateComponent {
   onSubmit(): void {
     if (this.form.invalid)
         return this.alert.someting_wrong();
-    this.member
-        .createMember(this.form.value)
-        .then(res => {
-            this.alert.notify('บันทึกข้อมูลสำเร็จ', 'info');
-            this.router.navigate(['/', AppURL.Authen, AuthURL.Member]);
-        })
-        .catch(err => this.alert.notify(err.Message));
+
+  // หากเป็นการเพิ่มสมาชิกใหม่
+    if (!this.memId) {
+      this.member
+      .createMember(this.form.value)
+      .then(res => {
+          this.alert.notify('บันทึกข้อมูลสำเร็จ', 'info');
+          this.router.navigate(['/', AppURL.Authen, AuthURL.Member]);
+      })
+      .catch(err => this.alert.notify(err.Message));
+    }
+    // หากเป็นการแก้ไขสมาชิก
+    else {
+      this.member
+          .updateMember(this.memId, this.form.value)
+          .then(res => {
+              this.alert.notify('แก้ไขข้อมูลสำเร็จ', 'info');
+              this.router.navigate(['/', AppURL.Authen, AuthURL.Member]);
+          })
+          .catch(err => this.alert.notify(err.Message));
+    }
   }
 
   // แสดงข้อมูลสิทธิ์ผู้ใช้เป็น ชื่อตัวหนังสือ
@@ -63,7 +85,6 @@ export class MemberCreateComponent implements IMemberCreateComponent {
           .onConvertImage(input)
           .then(base64 => imageControl.setValue(base64))
           .catch(err => {
-              imageControl.setValue(null);
               input.value = null;
               imageControl.setValue(null);
               this.alert.notify(err.Message);
@@ -75,11 +96,33 @@ export class MemberCreateComponent implements IMemberCreateComponent {
     this.form = this.builder.group({
         image: [],
         email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.pattern(/^[A-z0-9]{5,15}$/)]],
+        password: ['', [Validators.required, this.validators.isPassword]],
         firstname: ['', Validators.required],
         lastname: ['', Validators.required],
         position: ['', Validators.required],
         role: ['', Validators.required]
     });
+  }
+
+  // แก้ไขฟอร์ม
+  private initialUpdateFormData() {
+      if (!this.memId) return;
+      this.member
+          .getMemberById(this.memId)
+          .then(member => {
+              // นำข้อมูลมาใส่ฟอร์ม
+              const form = this.form;
+              form.controls['image'].setValue(member.image);
+              form.controls['email'].setValue(member.email);
+              form.controls['firstname'].setValue(member.firstname);
+              form.controls['lastname'].setValue(member.lastname);
+              form.controls['position'].setValue(member.position);
+              form.controls['role'].setValue(member.role);
+              form.controls['password'].setValidators(this.validators.isPassword);
+          })
+          .catch(err => {
+              this.alert.notify(err.Message);
+              this.router.navigate(['/', AppURL.Authen, AuthURL.Member]);
+          });
   }
 }

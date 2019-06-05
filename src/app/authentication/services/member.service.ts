@@ -35,16 +35,56 @@ export class MemberService {
       });
     }
 
+    // ดึงข้อมูลสมาชิกแค่คนเดียว
+    getMemberById(id) {
+        return new Promise<IAccount>((resolve, reject) => {
+            const member = this.account.mockUserItems.find(item => item.id == id);
+            if (!member) return reject({ Message: 'ไม่มีข้อมูลสมาชิกในระบบ' });
+            resolve(member);
+        });
+    }
+
     // เพิ่มข้อมูลสมาชิก
     createMember(model: IAccount) {
-        return new Promise((resolve, reject) => {
+        return new Promise<IAccount>((resolve, reject) => {
           if (this.account.mockUserItems.find(item => item.email == model.email))
-              return reject({ Message: 'อีเมล์นี้มีอยู่ในระบบแล้ว' })
+              return reject({ Message: 'อีเมล์นี้มีอยู่ในระบบแล้ว' });
             model.id = Math.random();
             model.created = new Date();
             model.updated = new Date();
             this.account.mockUserItems.push(model);
             resolve(model);
+        });
+    }
+
+    // ลบข้อมูลสมาชิก
+    deleteMember(id: any) {
+      return new Promise((resolve, reject) => {
+          const findIndex = this.account.mockUserItems.findIndex(item => item.id == id);
+          if (findIndex < 0) return reject({ Message: 'ไม่มีข้อมูลนี้ในระบบ' });
+          resolve(this.account.mockUserItems.splice(findIndex, 1));
+      });
+    }
+
+    // แก้ไขสมาชิก
+    updateMember(id: any, model: IAccount) {
+        return new Promise<IAccount>((resolve, reject) => {
+            const member = this.account.mockUserItems.find(item => item.id == id);
+            if (!member) return reject({ Message: 'ไม่มีข้อมูลสมาชิกในระบบ'});
+            // ตรวจสอบว่ามีอีเมล์นี้อยู่ในระบบหรือยัง
+            if (this.account.mockUserItems.find(item => {
+              return item.email == model.email && model.email != member.email;
+          })) return reject({ Message: 'มีอีเมล์นี้อยู่ในระบบแล้ว' });
+
+            member.email = model.email;
+            member.password = model.password || member.password; // หากไม่กรอก password ก็ใช้ตัวเดิม
+            member.firstname = model.firstname;
+            member.lastname = model.lastname;
+            member.position = model.position;
+            member.role = model.role;
+            member.image = model.image;
+            member.updated = new Date();
+            resolve(member);
         });
     }
 

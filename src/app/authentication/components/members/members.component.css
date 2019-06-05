@@ -1,3 +1,4 @@
-.dropdown-item {
+.dropdown-item,
+.cur {
     cursor: pointer;
 }

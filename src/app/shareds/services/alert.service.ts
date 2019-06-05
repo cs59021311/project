@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 declare const $: any;
+declare const swal: any;
 
 @Injectable()
 export class AlertService {
 
+  // แจ้งเตือน Default function
     notify(message: string, type: string = 'warning') {
         $.notify({
             // options
@@ -50,8 +52,18 @@ export class AlertService {
             });
     }
 
+    // แจ้งเตือนเมื่อเกิดข้อผิดพลาด
     someting_wrong(message: string = 'ข้อมูลบางอย่างไม่ถูกต้อง กรุณาลองอีกครั้ง!') {
         this.notify(message);
+    }
+
+    // แจ้งเตือนยืนยันการรายการ ลบ
+    confirm(message: string = 'คุณต้องการจะทำรายการต่อไปหรือไม่?'): Promise<any> {
+       return swal(message, {
+          buttons: ["ยกเลิก", "ยืนยัน"],
+          dangerMode: true
+
+      });
     }
 
 }

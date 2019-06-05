@@ -4,7 +4,7 @@
     <div *ngIf="UserLogin" class="app-sidebar__user">
         <img *ngIf="UserLogin.image" class="app-sidebar__user-avatar" [src]="UserLogin.image" alt="User Image">
         <img *ngIf="!UserLogin.image" class="app-sidebar__user-avatar" src="assets/images/no-image-profile.png" alt="User Image">
-        <div>
+        <div class="app-sidebar-ud">
             <p class="app-sidebar__user-name">
                 {{ UserLogin.firstname }} {{ UserLogin.lastname }}
             </p>

@@ -78,9 +78,9 @@
                                     <td>{{ getRoleName(item.role) }}</td>
                                     <td>{{ item.updated | date: 'dd-MM-yyyy' }}</td>
                                     <td class="text-right">
-                                        <i class="fa fa-edit"></i>
+                                        <i (click)="onUpdateMember(item)" class="fa fa-edit cur"></i>
                                         <span> | </span>
-                                        <i class="fa fa-trash"></i>
+                                        <i (click)="onDeleteMember(item)" class="fa fa-trash cur"></i>
                                     </td>
                                 </tr>
                             </tbody>

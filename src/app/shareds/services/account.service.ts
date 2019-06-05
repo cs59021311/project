@@ -4,8 +4,10 @@ import { ILogin } from 'src/app/components/login/login.interface';
 import { IProfile } from 'src/app/authentication/components/profile/profile.interface';
 import { IChangePassword } from 'src/app/authentication/components/profile/change-password/change-pasword.interface';
 
-@Injectable()
-export class AccountService {
+@Injectable({
+    providedIn: 'root'
+})
+export class AccountService { // Service นี้คือ Global Service
 
   public mockUserItems: IAccount[] = [
     {
@@ -38,7 +40,7 @@ export class AccountService {
   onChangePassword(accessToken: string, model: IChangePassword) {
       return new Promise((resolve, reject) => {
           const userProfile = this.mockUserItems.find(item => item.id == accessToken);
-          if (!userProfile) return reject({ Message: 'ไม่มีข้อมูลผู้ใช้งาน'});
+          if (!userProfile) return reject({ Message: 'ไม่มีข้อมูลผู้ใช้งาน' });
           if (userProfile.password != model.old_pass) return reject({ Message: 'รหัสผ่านเดิมไม่ถูกต้อง' });
           userProfile.password = model.new_pass;
           userProfile.updated = new Date();
@@ -83,11 +85,17 @@ export class AccountService {
   // ลงทะเบียน
   onRegister(model: IRegister) {
       return new Promise((resolve, reject) => {
-          model['id'] = Math.random();        //  สุ่ม id
-          this.mockUserItems.push(model);     // ทำให้เวลา register แล้วเอาค่าไป login ได้
+          const _model: IAccount = model;
+          _model.id = Math.random();            //  สุ่ม id
+          _model.image = null;
+          _model.position = '';
+          _model.role = IRoleAccount.Member;
+          _model.created = new Date();
+          _model.updated = new Date();
+          this.mockUserItems.push(model);       // ทำให้เวลา register แล้วเอาค่าไป login ได้
           resolve(model);
        // reject({ Message: 'Error form server!' });  // ถ้าเกิดว่าข้อมูลที่มันถูกส่งมา มันถูกต้อง resolve ก็จะทำงาน
-      });                                           // ถ้าอยากให้มัน แสดง error ก็ไปใช้ reject
+      });                                             // ถ้าอยากให้มัน แสดง error ก็ไปใช้ reject
     }
 
 }

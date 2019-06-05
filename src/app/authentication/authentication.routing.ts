@@ -18,7 +18,12 @@ const RouteLists: Routes = [
     { path: AuthURL.Card, component: CardsComponent },
     { path: AuthURL.Widget, component: WidgetsComponent },
     { path: AuthURL.Member, component: MembersComponent },
-    { path: AuthURL.MemberCreate, component: MemberCreateComponent },
+    {
+      path: AuthURL.MemberCreate, children: [                // จัดให้อยู่ group เดียวกัน
+          { path: '', component: MemberCreateComponent },   // ถ้าไม่มี id ส่งมาก็จะเข้า MemberCreateComponent
+          { path: ':id', component: MemberCreateComponent }, // ถ้ามี id ส่งมาก็จะเข้า MemberCreateComponent
+      ]
+    }
 ];
 
 export const AuthenticationRouting = RouterModule.forChild(RouteLists);

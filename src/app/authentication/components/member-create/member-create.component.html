@@ -2,7 +2,12 @@
     <div class="app-title">
         <div>
             <h1>
-                <i class="fa fa-users"></i> เพิ่มสมาชิกใหม่</h1>
+                <i class="fa fa-users"></i>
+                <!-- memId ถ้าเกิดว่ามันไม่มี id ก็เป็น เพิ่มสมาชิกใหม่ -->
+                <span *ngIf="!memId"> เพิ่มสมาชิกใหม่</span>
+                <!-- memId ถ้าเกิดว่ามันมี id ก็เป็น แก้ไขสมาชิก -->
+                <span *ngIf="memId"> แก้ไขสมาชิก</span>
+            </h1>
             <p>หน้าสำหรับเพิ่มหรือแก้ไขสมาชิก</p>
         </div>
         <ul class="app-breadcrumb breadcrumb">
@@ -13,7 +18,8 @@
                 รายการสมาชิก
             </li>
             <li class="breadcrumb-item">
-                <a href="#">เพิ่มสมาชิกใหม่</a>
+                <a *ngIf="!memId">เพิ่มสมาชิกใหม่</a>
+                <a *ngIf="memId">แก้ไขสมาชิก</a>
             </li>
         </ul>
     </div>
@@ -24,7 +30,12 @@
             <!-- ส่วนหัว -->
             <div class="tile-title-w-btn">
               <h3 class="title">
-                  <i class="fa fa-user-plus"></i> เพิ่มสมาชิกใหม่
+                  <span *ngIf="!memId">
+                    <i class="fa fa-user-plus"></i> เพิ่มสมาชิกใหม่
+                  </span>
+                  <span *ngIf="memId">
+                      <i class="fa fa-edit"></i> แก้ไขสมาชิก
+                  </span>
               </h3>
             </div>
 
