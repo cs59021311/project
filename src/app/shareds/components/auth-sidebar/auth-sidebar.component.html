@@ -14,13 +14,13 @@
         </div>
     </div>
     <ul class="app-menu">
-        <li>
+        <li *ngIf="UserLogin.role != Role.Member">
             <a class="app-menu__item" [routerLink]="['/', AppURL.Authen, AuthURL.Dashboard]" routerLinkActive="active">
                 <i class="app-menu__icon fa fa-dashboard"></i>
                 <span class="app-menu__label">แดชบอร์ด</span>
             </a>
         </li>
-        <li class="treeview" routerLinkActive="is-expanded">
+        <li *ngIf="UserLogin.role != Role.Member" class="treeview" routerLinkActive="is-expanded">
             <a class="app-menu__item" href="#" data-toggle="treeview">
                 <i class="app-menu__icon fa fa-users"></i>
                 <span class="app-menu__label">ส่วนของสมาชิก</span>
@@ -32,7 +32,7 @@
                         <i class="icon fa fa-circle-o"></i> รายการสมาชิก
                     </a>
                 </li>
-                <li>
+                <li *ngIf="UserLogin.role == Role.Admin">
                     <a class="treeview-item" [routerLink]="['/', AppURL.Authen, AuthURL.MemberCreate]" routerLinkActive="active">
                         <i class="icon fa fa-circle-o"></i> เพิ่มสมาชิกใหม่
                     </a>

@@ -1,12 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MemberService } from '../../services/member.service';
 import { IMembersComponent, IMemberSearchKey, IMemberSearch, IMember } from './members.interface';
-import { IAccount, IRoleAccount } from 'src/app/shareds/services/account.service';
+import { IAccount, IRoleAccount, AccountService } from 'src/app/shareds/services/account.service';
 import { AlertService } from 'src/app/shareds/services/alert.service';
 import { PageChangedEvent } from 'ngx-bootstrap';
 import { Router } from '@angular/router';
 import { AppURL } from 'src/app/app.url';
 import { AuthURL } from '../../authentication.url';
+import { AuthenService } from 'src/app/services/authen.service';
 
 @Component({
     selector: 'app-members',
@@ -19,8 +20,9 @@ export class MembersComponent implements IMembersComponent {
         private member: MemberService,
         private alert: AlertService,
         private detect: ChangeDetectorRef, // กระตุ้น Event
-        private router: Router
-
+        private router: Router,
+        private authen: AuthenService,
+        private account: AccountService
     ) {
         this.initialLoadMembers({
             startPage: this.startPage,
@@ -29,6 +31,8 @@ export class MembersComponent implements IMembersComponent {
 
         // กำหนดค่าเริ่มต้นให้กับ searchType
         this.searchType = this.searchTypeItems[0];
+        // โหลด user login
+        this.initialLoadUserLogin();
     }
 
     items: IMember;
@@ -47,6 +51,10 @@ export class MembersComponent implements IMembersComponent {
     // ตัวแปร pagination
     startPage: number = 1;
     limitPage: number = 10;
+
+    // ตรวจสอบสิทธิ์ผู้ใช้งาน
+    UserLogin: IAccount;
+    Role = IRoleAccount;
 
     // เปลี่ยนหน้า pagination
     onPageChanged(page: PageChangedEvent) {
@@ -117,5 +125,13 @@ export class MembersComponent implements IMembersComponent {
         .getMembers(options)
         .then(items => this.items = items)
         .catch(err => this.alert.notify(err.Message));
+    }
+
+    // โหลดข้อมูลผู้ใช้ที่ Login
+    private initialLoadUserLogin() {
+        this.account
+            .getUserLogin(this.authen.getAuthenticated())
+            .then(userLogin => this.UserLogin = userLogin)
+            .catch(err => this.alert.notify(err.Message));
     }
 }

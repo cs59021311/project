@@ -78,9 +78,9 @@
                                     <td>{{ getRoleName(item.role) }}</td>
                                     <td>{{ item.updated | date: 'dd-MM-yyyy' }}</td>
                                     <td class="text-right">
-                                        <i (click)="onUpdateMember(item)" class="fa fa-edit cur"></i>
-                                        <span> | </span>
-                                        <i (click)="onDeleteMember(item)" class="fa fa-trash cur"></i>
+                                        <i *ngIf="UserLogin.role == Role.Admin" (click)="onUpdateMember(item)" class="fa fa-edit cur"></i>
+                                        <span *ngIf="UserLogin.role == Role.Admin"> | </span>
+                                        <i *ngIf="UserLogin.role == Role.Admin" (click)="onDeleteMember(item)" class="fa fa-trash cur"></i>
                                     </td>
                                 </tr>
                             </tbody>

@@ -12,25 +12,37 @@ export class AccountService { // Service นี้คือ Global Service
   public mockUserItems: IAccount[] = [
     {
         id: 1,
-        firstname: 'ปริญญา',
-        lastname: 'จันดา',
-        email: 'parinya@gmail.com',
+        firstname: 'Admin',
+        lastname: 'Admin',
+        email: 'admin@gmail.com',
         password: '123456',
         position: 'ผู้ดูแลระบบบัญชีผู้ใช้',
-        image: 'https://s3.amazonaws.com/uifaces/faces/twitter/jsa/48.jpg',
+        image: null,
         role: IRoleAccount.Admin,
         created: new Date(),
         updated: new Date()
     },
     {
         id: 2,
-        firstname: 'นพนัย',
-        lastname: 'จันทร์สี',
-        email: 'asdasd@gmail.com',
+        firstname: 'Employee',
+        lastname: 'Employee',
+        email: 'employee@gmail.com',
         password: '123456',
         position: 'ผู้ดูแลระบบจัดการรายได้',
         image: null,
         role: IRoleAccount.Employee,
+        created: new Date(),
+        updated: new Date()
+  },
+    {
+        id: 3,
+        firstname: 'Member',
+        lastname: 'Member',
+        email: 'member@gmail.com',
+        password: '123456',
+        position: 'ผู้ดูแลระบบจัดการรายได้',
+        image: null,
+        role: IRoleAccount.Member,
         created: new Date(),
         updated: new Date()
   }
